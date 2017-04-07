@@ -1,0 +1,229 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+        href="https://github.com/alexscheelmeyer/node-phantom"
+
+    >node-phantom (v0.2.5)</a>
+</h1>
+<h4>bridge between node.js and PhantomJS</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.node-phantom">module node-phantom</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-phantom.create">
+            function <span class="apidocSignatureSpan">node-phantom.</span>create
+            <span class="apidocSignatureSpan">(callback, options)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.node-phantom" id="apidoc.module.node-phantom">module node-phantom</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.node-phantom.create" id="apidoc.element.node-phantom.create">
+        function <span class="apidocSignatureSpan">node-phantom.</span>create
+        <span class="apidocSignatureSpan">(callback, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">create = function (callback, options){
+		if(options===undefined)options={};
+		if(options.phantomPath===undefined)options.phantomPath=&#x27;phantomjs&#x27;;
+		if(options.parameters===undefined)options.parameters={};
+
+		function spawnPhantom(port,callback){
+			var args=[];
+			for(var parm in options.parameters) {
+				args.push(&#x27;--&#x27; + parm + &#x27;=&#x27; + options.parameters[parm]);
+			}
+			args=args.concat([__dirname + &#x27;/bridge.js&#x27;, port]);
+
+			var phantom=child.spawn(options.phantomPath,args);
+			phantom.stdout.on(&#x27;data&#x27;,function(data){
+				return console.log(&#x27;phantom stdout: &#x27;+data);
+			});
+			phantom.stderr.on(&#x27;data&#x27;,function(data){
+				return console.warn(&#x27;phantom stderr: &#x27;+data);
+			});
+			var hasErrors=false;
+			phantom.on(&#x27;error&#x27;,function(){
+				hasErrors=true;
+			});
+			phantom.on(&#x27;exit&#x27;,function(code){
+				hasErrors=true; //if phantom exits it is always an error
+			});
+			setTimeout(function(){ //wait a bit to see if the spawning of phantomjs immediately fails due to bad path or similar
+				callback(hasErrors,phantom);
+			},100);
+		}
+		
+		var server=http.createServer(function(request,response){
+			response.writeHead(200,{&#x22;Content-Type&#x22;: &#x22;text/html&#x22;});
+			response.end(&#x27;&#x3c;html&#x3e;&#x3c;head&#x3e;&#x3c;script src=&#x22;/socket.io/socket.io.js&#x22; type=&#x22;text/javascript&#x22;&#x3e;&#x3c;/script&#x3e;&#x3c;script type=&#x22;text/javascript
+&#x22;&#x3e;\n\
+				window.onload=function(){\n\
+					var socket = new io.connect(&#x22;http://&#x22; + window.location.hostname);\n\
+					socket.on(&#x22;cmd&#x22;, function(msg){\n\
+						alert(msg);\n\
+					});\n\
+					window.socket = socket;\n\
+				};\n\
+			&#x3c;/script&#x3e;&#x3c;/head&#x3e;&#x3c;body&#x3e;&#x3c;/body&#x3e;&#x3c;/html&#x3e;&#x27;);
+		}).listen(function(){			
+			var io=socketio.listen(server,{&#x27;log level&#x27;:1});
+	
+			var port=server.address().port;
+			spawnPhantom(port,function(err,phantom){
+				if(err){
+					server.close();
+					callback(true);
+					return;
+				}
+				var pages={};
+				var cmds={};
+				var cmdid=0;
+				function request(socket,args,callback){
+					args.splice(1,0,cmdid);
+//					console.log(&#x27;requesting:&#x27;+args);
+					socket.emit(&#x27;cmd&#x27;,JSON.stringify(args));
+	
+					cmds[cmdid]={cb:callback};
+					cmdid++;
+				}
+			
+				io.sockets.on(&#x27;connection&#x27;,function(socket){
+					socket.on(&#x27;res&#x27;,function(response){
+//						console.log(response);
+						var id=response[0];
+						var cmdId=response[1];
+						switch(response[2]){
+						case &#x27;pageCreated&#x27;:
+							var pageProxy={
+								open:function(url, callback){
+									if(callback === undefined){
+										request(socket, [id, &#x27;pageOpen&#x27;, url]);
+									}else{
+										request(socket, [id, &#x27;pageOpenWithCallback&#x27;, url], callback);
+									}
+								},
+								close:function(callback){
+									request(socket,[id,&#x27;pageClose&#x27;],callbackOrDummy(callback));
+								},
+								render:function(filename,callback){
+									request(socket,[id,&#x27;pageRender&#x27;,filename],callbackOrDummy(callback));
+								},
+								renderBase64:function(extension,callback){
+									request(socket,[id,&#x27;pageRenderBase64&#x27;,extension],callbackOrDummy(callback));
+								},
+								injectJs:function(url,callback){
+									request(socket,[id,&#x27;pageInjectJs&#x27;,url],callbackOrDummy(callback));
+								},
+								includeJs:function(url,callback){
+									request(socket,[id,&#x27;pageIncludeJs&#x27;,url],callbackOrDummy(callback));
+								},
+								sendEvent:function(event,x,y,callback){
+									request(socket,[id,&#x27;pageSendEvent&#x27;,event,x,y],callbackOrDummy(callback));
+								},
+								uploadFile:function(selector,filename,callback){
+									request(socket,[id,&#x27;pageUploadFile&#x27;,selector,filename],callbackOrDummy(callback));
+								},
+								evaluate:function(evaluator,callback){
+									request(socket,[id,&#x27;pageEvaluate&#x27;,evaluator.toString()].concat(Array.prototype.slice.call(arguments,2)),callbackOrDummy
+(callback));
+								},
+	                            evaluateAsync:function(evaluator,callback){
+									request(socket,[id,&#x27;pageEvaluateAsync&#x27;,evaluator.toString()].concat(Array.prototype.slice.call(arguments,2)),callbackOrDummy
+(callback));
+								},
+								set:function(name,value,callback){
+									request(socket,[id,&#x27;pageSet&#x27;,name,value],callbackOrDummy(callback));
+								},
+								get:function(name,callback){ ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+Usage
+-----
+You can use it pretty much like you would use PhantomJS-Node, for example this is an adaptation of a [web scraping example](http
+://net.tutsplus.com/tutorials/javascript-ajax/web-scraping-with-node-js/) :
+
+```javascript
+var phantom=require(&#x27;node-phantom&#x27;);
+phantom.<span class="apidocCodeKeywordSpan">create</span>(function(err,ph) {
+return ph.createPage(function(err,page) {
+  return page.open(&#x22;http://tilomitra.com/repository/screenscrape/ajax.html&#x22;, function(err,status) {
+    console.log(&#x22;opened site? &#x22;, status);
+    page.includeJs(&#x27;http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js&#x27;, function(err) {
+      //jQuery Loaded.
+      //Wait for a bit for AJAX content to load on the page. Here, we are waiting 5 seconds.
+      setTimeout(function() {
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>

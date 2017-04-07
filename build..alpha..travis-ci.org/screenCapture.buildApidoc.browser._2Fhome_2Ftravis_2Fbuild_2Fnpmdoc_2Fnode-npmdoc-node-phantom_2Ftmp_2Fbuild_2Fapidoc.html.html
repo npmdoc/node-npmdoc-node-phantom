@@ -1,0 +1,223 @@
+<html><head></head><body><div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a href="https://github.com/alexscheelmeyer/node-phantom">node-phantom (v0.2.5)</a>
+</h1>
+<h4>bridge between node.js and PhantomJS</h4>
+<div class="apidocSectionDiv"><a href="#apidoc.tableOfContents" id="apidoc.tableOfContents"><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.node-phantom">module node-phantom</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.node-phantom.create">
+            function <span class="apidocSignatureSpan">node-phantom.</span>create
+            <span class="apidocSignatureSpan">(callback, options)</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.node-phantom" id="apidoc.module.node-phantom">module node-phantom</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.node-phantom.create" id="apidoc.element.node-phantom.create">
+        function <span class="apidocSignatureSpan">node-phantom.</span>create
+        <span class="apidocSignatureSpan">(callback, options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">create = function (callback, options){
+		if(options===undefined)options={};
+		if(options.phantomPath===undefined)options.phantomPath='phantomjs';
+		if(options.parameters===undefined)options.parameters={};
+
+		function spawnPhantom(port,callback){
+			var args=[];
+			for(var parm in options.parameters) {
+				args.push('--' + parm + '=' + options.parameters[parm]);
+			}
+			args=args.concat([__dirname + '/bridge.js', port]);
+
+			var phantom=child.spawn(options.phantomPath,args);
+			phantom.stdout.on('data',function(data){
+				return console.log('phantom stdout: '+data);
+			});
+			phantom.stderr.on('data',function(data){
+				return console.warn('phantom stderr: '+data);
+			});
+			var hasErrors=false;
+			phantom.on('error',function(){
+				hasErrors=true;
+			});
+			phantom.on('exit',function(code){
+				hasErrors=true; //if phantom exits it is always an error
+			});
+			setTimeout(function(){ //wait a bit to see if the spawning of phantomjs immediately fails due to bad path or similar
+				callback(hasErrors,phantom);
+			},100);
+		}
+		
+		var server=http.createServer(function(request,response){
+			response.writeHead(200,{"Content-Type": "text/html"});
+			response.end('&lt;html&gt;&lt;head&gt;&lt;script src="/socket.io/socket.io.js" type="text/javascript"&gt;&lt;/script&gt;&lt;script type="text/javascript
+"&gt;\n\
+				window.onload=function(){\n\
+					var socket = new io.connect("http://" + window.location.hostname);\n\
+					socket.on("cmd", function(msg){\n\
+						alert(msg);\n\
+					});\n\
+					window.socket = socket;\n\
+				};\n\
+			&lt;/script&gt;&lt;/head&gt;&lt;body&gt;&lt;/body&gt;&lt;/html&gt;');
+		}).listen(function(){			
+			var io=socketio.listen(server,{'log level':1});
+	
+			var port=server.address().port;
+			spawnPhantom(port,function(err,phantom){
+				if(err){
+					server.close();
+					callback(true);
+					return;
+				}
+				var pages={};
+				var cmds={};
+				var cmdid=0;
+				function request(socket,args,callback){
+					args.splice(1,0,cmdid);
+//					console.log('requesting:'+args);
+					socket.emit('cmd',JSON.stringify(args));
+	
+					cmds[cmdid]={cb:callback};
+					cmdid++;
+				}
+			
+				io.sockets.on('connection',function(socket){
+					socket.on('res',function(response){
+//						console.log(response);
+						var id=response[0];
+						var cmdId=response[1];
+						switch(response[2]){
+						case 'pageCreated':
+							var pageProxy={
+								open:function(url, callback){
+									if(callback === undefined){
+										request(socket, [id, 'pageOpen', url]);
+									}else{
+										request(socket, [id, 'pageOpenWithCallback', url], callback);
+									}
+								},
+								close:function(callback){
+									request(socket,[id,'pageClose'],callbackOrDummy(callback));
+								},
+								render:function(filename,callback){
+									request(socket,[id,'pageRender',filename],callbackOrDummy(callback));
+								},
+								renderBase64:function(extension,callback){
+									request(socket,[id,'pageRenderBase64',extension],callbackOrDummy(callback));
+								},
+								injectJs:function(url,callback){
+									request(socket,[id,'pageInjectJs',url],callbackOrDummy(callback));
+								},
+								includeJs:function(url,callback){
+									request(socket,[id,'pageIncludeJs',url],callbackOrDummy(callback));
+								},
+								sendEvent:function(event,x,y,callback){
+									request(socket,[id,'pageSendEvent',event,x,y],callbackOrDummy(callback));
+								},
+								uploadFile:function(selector,filename,callback){
+									request(socket,[id,'pageUploadFile',selector,filename],callbackOrDummy(callback));
+								},
+								evaluate:function(evaluator,callback){
+									request(socket,[id,'pageEvaluate',evaluator.toString()].concat(Array.prototype.slice.call(arguments,2)),callbackOrDummy
+(callback));
+								},
+	                            evaluateAsync:function(evaluator,callback){
+									request(socket,[id,'pageEvaluateAsync',evaluator.toString()].concat(Array.prototype.slice.call(arguments,2)),callbackOrDummy
+(callback));
+								},
+								set:function(name,value,callback){
+									request(socket,[id,'pageSet',name,value],callbackOrDummy(callback));
+								},
+								get:function(name,callback){ ...</pre></li>
+    <li>example usage<pre class="apidocCodePre">...
+
+Usage
+-----
+You can use it pretty much like you would use PhantomJS-Node, for example this is an adaptation of a [web scraping example](http
+://net.tutsplus.com/tutorials/javascript-ajax/web-scraping-with-node-js/) :
+
+```javascript
+var phantom=require('node-phantom');
+phantom.<span class="apidocCodeKeywordSpan">create</span>(function(err,ph) {
+return ph.createPage(function(err,page) {
+  return page.open("http://tilomitra.com/repository/screenscrape/ajax.html", function(err,status) {
+    console.log("opened site? ", status);
+    page.includeJs('http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js', function(err) {
+      //jQuery Loaded.
+      //Wait for a bit for AJAX content to load on the page. Here, we are waiting 5 seconds.
+      setTimeout(function() {
+...</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
+</body></html>
