@@ -1,53 +1,55 @@
-<svg height="798" width="720" xmlns="http://www.w3.org/2000/svg">
-<rect height="798" fill="#555" width="720"></rect>
+<svg height="830" width="720" xmlns="http://www.w3.org/2000/svg">
+<rect height="830" fill="#555" width="720"></rect>
 <text fill="#7f7" font-family="Courier New" font-size="12" xml:space="preserve">
-<tspan x="10" y="26">4 megabytes</tspan>
-<tspan x="10" y="42">└─┬ node-phantom@0.2.5 </tspan>
-<tspan x="10" y="58">  └─┬ socket.io@1.7.3 </tspan>
-<tspan x="10" y="74">    ├─┬ debug@2.3.3 </tspan>
-<tspan x="10" y="90">    │ └── ms@0.7.2 </tspan>
-<tspan x="10" y="106">    ├─┬ engine.io@1.8.3 </tspan>
-<tspan x="10" y="122">    │ ├─┬ accepts@1.3.3 </tspan>
-<tspan x="10" y="138">    │ │ ├─┬ mime-types@2.1.15 </tspan>
-<tspan x="10" y="154">    │ │ │ └── mime-db@1.27.0 </tspan>
-<tspan x="10" y="170">    │ │ └── negotiator@0.6.1 </tspan>
-<tspan x="10" y="186">    │ ├── base64id@1.0.0 </tspan>
-<tspan x="10" y="202">    │ ├── cookie@0.3.1 </tspan>
-<tspan x="10" y="218">    │ ├─┬ engine.io-parser@1.3.2 </tspan>
-<tspan x="10" y="234">    │ │ ├── after@0.8.2 </tspan>
-<tspan x="10" y="250">    │ │ ├── arraybuffer.slice@0.0.6 </tspan>
-<tspan x="10" y="266">    │ │ ├── base64-arraybuffer@0.1.5 </tspan>
-<tspan x="10" y="282">    │ │ ├── blob@0.0.4 </tspan>
-<tspan x="10" y="298">    │ │ └── wtf-8@1.0.0 </tspan>
-<tspan x="10" y="314">    │ └─┬ ws@1.1.2 </tspan>
-<tspan x="10" y="330">    │   ├── options@0.0.6 </tspan>
-<tspan x="10" y="346">    │   └── ultron@1.0.2 </tspan>
-<tspan x="10" y="362">    ├─┬ has-binary@0.1.7 </tspan>
-<tspan x="10" y="378">    │ └── isarray@0.0.1 </tspan>
-<tspan x="10" y="394">    ├── object-assign@4.1.0 </tspan>
-<tspan x="10" y="410">    ├── socket.io-adapter@0.5.0 </tspan>
-<tspan x="10" y="426">    ├─┬ socket.io-client@1.7.3 </tspan>
-<tspan x="10" y="442">    │ ├── backo2@1.0.2 </tspan>
-<tspan x="10" y="458">    │ ├── component-bind@1.0.0 </tspan>
-<tspan x="10" y="474">    │ ├── component-emitter@1.2.1 </tspan>
-<tspan x="10" y="490">    │ ├─┬ engine.io-client@1.8.3 </tspan>
-<tspan x="10" y="506">    │ │ ├── component-emitter@1.2.1 </tspan>
-<tspan x="10" y="522">    │ │ ├── component-inherit@0.0.3 </tspan>
-<tspan x="10" y="538">    │ │ ├── has-cors@1.1.0 </tspan>
-<tspan x="10" y="554">    │ │ ├── parsejson@0.0.3 </tspan>
-<tspan x="10" y="570">    │ │ ├── parseqs@0.0.5 </tspan>
-<tspan x="10" y="586">    │ │ ├── xmlhttprequest-ssl@1.5.3 </tspan>
-<tspan x="10" y="602">    │ │ └── yeast@0.1.2 </tspan>
-<tspan x="10" y="618">    │ ├── indexof@0.0.1 </tspan>
-<tspan x="10" y="634">    │ ├── object-component@0.0.3 </tspan>
-<tspan x="10" y="650">    │ ├─┬ parseuri@0.0.5 </tspan>
-<tspan x="10" y="666">    │ │ └─┬ better-assert@1.0.2 </tspan>
-<tspan x="10" y="682">    │ │   └── callsite@1.0.0 </tspan>
-<tspan x="10" y="698">    │ └── to-array@0.1.4 </tspan>
-<tspan x="10" y="714">    └─┬ socket.io-parser@2.3.1 </tspan>
-<tspan x="10" y="730">      ├── component-emitter@1.1.2 </tspan>
-<tspan x="10" y="746">      ├─┬ debug@2.2.0 </tspan>
-<tspan x="10" y="762">      │ └── ms@0.7.1 </tspan>
-<tspan x="10" y="778">      └── json3@3.3.2</tspan>
+<tspan x="10" y="26">4 megabytes installed</tspan>
+<tspan x="10" y="42"></tspan>
+<tspan x="10" y="58">node_modules</tspan>
+<tspan x="10" y="74">└─┬ node-phantom@0.2.5 </tspan>
+<tspan x="10" y="90">  └─┬ socket.io@1.7.3 </tspan>
+<tspan x="10" y="106">    ├─┬ debug@2.3.3 </tspan>
+<tspan x="10" y="122">    │ └── ms@0.7.2 </tspan>
+<tspan x="10" y="138">    ├─┬ engine.io@1.8.3 </tspan>
+<tspan x="10" y="154">    │ ├─┬ accepts@1.3.3 </tspan>
+<tspan x="10" y="170">    │ │ ├─┬ mime-types@2.1.15 </tspan>
+<tspan x="10" y="186">    │ │ │ └── mime-db@1.27.0 </tspan>
+<tspan x="10" y="202">    │ │ └── negotiator@0.6.1 </tspan>
+<tspan x="10" y="218">    │ ├── base64id@1.0.0 </tspan>
+<tspan x="10" y="234">    │ ├── cookie@0.3.1 </tspan>
+<tspan x="10" y="250">    │ ├─┬ engine.io-parser@1.3.2 </tspan>
+<tspan x="10" y="266">    │ │ ├── after@0.8.2 </tspan>
+<tspan x="10" y="282">    │ │ ├── arraybuffer.slice@0.0.6 </tspan>
+<tspan x="10" y="298">    │ │ ├── base64-arraybuffer@0.1.5 </tspan>
+<tspan x="10" y="314">    │ │ ├── blob@0.0.4 </tspan>
+<tspan x="10" y="330">    │ │ └── wtf-8@1.0.0 </tspan>
+<tspan x="10" y="346">    │ └─┬ ws@1.1.2 </tspan>
+<tspan x="10" y="362">    │   ├── options@0.0.6 </tspan>
+<tspan x="10" y="378">    │   └── ultron@1.0.2 </tspan>
+<tspan x="10" y="394">    ├─┬ has-binary@0.1.7 </tspan>
+<tspan x="10" y="410">    │ └── isarray@0.0.1 </tspan>
+<tspan x="10" y="426">    ├── object-assign@4.1.0 </tspan>
+<tspan x="10" y="442">    ├── socket.io-adapter@0.5.0 </tspan>
+<tspan x="10" y="458">    ├─┬ socket.io-client@1.7.3 </tspan>
+<tspan x="10" y="474">    │ ├── backo2@1.0.2 </tspan>
+<tspan x="10" y="490">    │ ├── component-bind@1.0.0 </tspan>
+<tspan x="10" y="506">    │ ├── component-emitter@1.2.1 </tspan>
+<tspan x="10" y="522">    │ ├─┬ engine.io-client@1.8.3 </tspan>
+<tspan x="10" y="538">    │ │ ├── component-emitter@1.2.1 </tspan>
+<tspan x="10" y="554">    │ │ ├── component-inherit@0.0.3 </tspan>
+<tspan x="10" y="570">    │ │ ├── has-cors@1.1.0 </tspan>
+<tspan x="10" y="586">    │ │ ├── parsejson@0.0.3 </tspan>
+<tspan x="10" y="602">    │ │ ├── parseqs@0.0.5 </tspan>
+<tspan x="10" y="618">    │ │ ├── xmlhttprequest-ssl@1.5.3 </tspan>
+<tspan x="10" y="634">    │ │ └── yeast@0.1.2 </tspan>
+<tspan x="10" y="650">    │ ├── indexof@0.0.1 </tspan>
+<tspan x="10" y="666">    │ ├── object-component@0.0.3 </tspan>
+<tspan x="10" y="682">    │ ├─┬ parseuri@0.0.5 </tspan>
+<tspan x="10" y="698">    │ │ └─┬ better-assert@1.0.2 </tspan>
+<tspan x="10" y="714">    │ │   └── callsite@1.0.0 </tspan>
+<tspan x="10" y="730">    │ └── to-array@0.1.4 </tspan>
+<tspan x="10" y="746">    └─┬ socket.io-parser@2.3.1 </tspan>
+<tspan x="10" y="762">      ├── component-emitter@1.1.2 </tspan>
+<tspan x="10" y="778">      ├─┬ debug@2.2.0 </tspan>
+<tspan x="10" y="794">      │ └── ms@0.7.1 </tspan>
+<tspan x="10" y="810">      └── json3@3.3.2</tspan>
 </text>
 </svg>
